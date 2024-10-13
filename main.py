@@ -34,10 +34,20 @@ player_y = WORLD_HEIGHT // 2
 camera_x = 0
 camera_y = 0
 
+def collision_check(new_player_rect, walls):
+    # Check for horizontal collision
+    collision = False
+    for wall in walls:
+        if new_player_rect.colliderect(wall):
+            collision = True
+            break
+    
+    return collision
+
 # Define walls as a list of rectangles (x, y, width, height)
 walls = [
     pygame.Rect(200, 200, 400, 50),  # A horizontal wall
-    pygame.Rect(800, 500, 50, 400),  # A vertical wall
+    pygame.Rect(850, 500, 50, 400),  # A vertical wall
     pygame.Rect(1000, 1000, 300, 50), # Another horizontal wall
     # Add more walls as needed
 ]
@@ -54,46 +64,37 @@ while True:
     # Get key presses
     keys = pygame.key.get_pressed()
     
-    # Update player position
-    if keys[pygame.K_a]:  # Left
-        player_x -= player_speed
-    if keys[pygame.K_d]:  # Right
-        player_x += player_speed
-    if keys[pygame.K_w]:  # Up
-        player_y -= player_speed
-    if keys[pygame.K_s]:  # Down
-        player_y += player_speed
-    
     player_rect = pygame.Rect(player_x, player_y, player_size, player_size)
     
-    # Move the player while checking for collisions
     new_player_x = player_x
-    new_player_y = player_y
-
     if keys[pygame.K_a]:  # Left
         new_player_x -= player_speed
     if keys[pygame.K_d]:  # Right
         new_player_x += player_speed
+
+    new_player_rect = pygame.Rect(new_player_x, player_y, player_size, player_size)
+
+    collision = collision_check(new_player_rect=new_player_rect, walls=walls)
+
+    if not collision:
+        player_x = new_player_x
+    
+
+    new_player_y = player_y
     if keys[pygame.K_w]:  # Up
         new_player_y -= player_speed
     if keys[pygame.K_s]:  # Down
         new_player_y += player_speed
 
-    # Create a new rect for the future position
-    new_player_rect = pygame.Rect(new_player_x, new_player_y, player_size, player_size)
+    new_player_rect = pygame.Rect(player_x, new_player_y, player_size, player_size)
+
+    collision = collision_check(new_player_rect=new_player_rect, walls=walls)
+
+    if not collision:
+        player_y = new_player_y
 
     # Check for collision with walls
     collision = False
-    
-    for wall in walls:
-        if new_player_rect.colliderect(wall):
-            collision = True
-            break
-    
-    # Only move if there's no collision
-    if not collision:
-        player_x = new_player_x
-        player_y = new_player_y
     
     # Update camera position (centered on player)
     camera_x = player_x - WINDOW_WIDTH // 2
