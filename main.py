@@ -30,6 +30,14 @@ player_speed = 5
 player_x = WORLD_WIDTH // 2
 player_y = WORLD_HEIGHT // 2
 
+player_images = {}
+
+for direction in ('up', 'down', 'left', 'right'):
+    player_images[direction] = pygame.image.load(f'images/player_{direction}.png')
+
+
+player_direction = "up"
+
 # Camera (viewport) offset
 camera_x = 0
 camera_y = 0
@@ -69,8 +77,10 @@ while True:
     new_player_x = player_x
     if keys[pygame.K_a]:  # Left
         new_player_x -= player_speed
+        player_direction = "up"
     if keys[pygame.K_d]:  # Right
         new_player_x += player_speed
+        player_direction = "right"
 
     new_player_rect = pygame.Rect(new_player_x, player_y, player_size, player_size)
 
@@ -83,8 +93,10 @@ while True:
     new_player_y = player_y
     if keys[pygame.K_w]:  # Up
         new_player_y -= player_speed
+        player_direction = "up"
     if keys[pygame.K_s]:  # Down
         new_player_y += player_speed
+        player_direction = "down"
 
     new_player_rect = pygame.Rect(player_x, new_player_y, player_size, player_size)
 
