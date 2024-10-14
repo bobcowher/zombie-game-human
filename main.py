@@ -1,7 +1,9 @@
 import pygame
 import sys
 import math
+from zombie import Zombie
 from bullet import Bullet
+import random
 
 # Initialize PyGame
 pygame.init()
@@ -16,7 +18,7 @@ screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption('Zombie Shooter')
 
 # Setup clock for frame rate
-clock = pygame.time.Clock()
+clock = pygame.time.Clock() 
 
 # Define colors (for testing purposes)
 WHITE = (255, 255, 255)
@@ -41,6 +43,7 @@ for direction in ('up', 'down', 'left', 'right'):
 player_direction = "up"
 
 bullets = []
+zombies = []
 
 # Camera (viewport) offset
 camera_x = 0
@@ -76,6 +79,9 @@ while True:
                 bullet = Bullet(player_x, player_y, player_direction)
                 bullets.append(bullet)
                 print("Space pressed. Bullet fired")
+
+    if random.randint(1, 100) < 3:  # 3% chance of spawning a zombie per frame
+        zombies.append(Zombie(world_height=WORLD_HEIGHT, world_width=WORLD_WIDTH))  # Instantiate a new zombie
 
     # Get key presses
     keys = pygame.key.get_pressed()
@@ -124,13 +130,23 @@ while True:
     camera_x = max(0, min(camera_x, WORLD_WIDTH - WINDOW_WIDTH))
     camera_y = max(0, min(camera_y, WORLD_HEIGHT - WINDOW_HEIGHT))
 
+
+    # Move zombies toward player and check for collisions with bullets
+    zombies = [zombie for zombie in zombies if not zombie.check_bullet_collision(bullets)]
+    for zombie in zombies:
+        zombie.move_toward_player(player_x, player_y)
+
     # Drawing
     screen.fill(WHITE)  # Fill the screen with white (background)
 
     # Move and draw bullets
     for bullet in bullets:
         bullet.move()
-        bullet.draw(screen)
+        bullet.draw(screen, camera_x, camera_y)
+
+    # Draw zombies
+    for zombie in zombies:
+        zombie.draw(screen, camera_x, camera_y)
 
     # Draw the player (adjusted for the camera position)
     player_image = player_images[player_direction]

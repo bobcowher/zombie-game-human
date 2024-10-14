@@ -24,5 +24,5 @@ class Bullet:
             self.x += self.bullet_speed
         self.rect.topleft = (self.x, self.y)
 
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.bullet_color, self.rect)
+    def draw(self, screen, camera_x, camera_y):
+        pygame.draw.rect(screen, self.bullet_color, (self.rect.x - camera_x, self.rect.y - camera_y, 10, 10))
