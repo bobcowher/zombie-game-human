@@ -161,7 +161,7 @@ while True:
     for zombie in zombies:
         zombie_image = zombie.images[zombie.direction]
         zombie.rect = zombie_image.get_rect(center=(zombie.x, zombie.y))
-        screen.blit(zombie_image, (zombie.x - camera_x, zombie.y - camera_y))
+        screen.blit(zombie_image, (zombie.rect.x - camera_x, zombie.rect.y - camera_y))
 
 
     screen.blit(player_image, (player.x - camera_x, player.y - camera_y))

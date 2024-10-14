@@ -49,7 +49,8 @@ class Zombie:
 
         self.direction = "up"
 
-        self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+        self.rect = pygame.Rect(0, 0, self.size, self.size)
+        self.rect.center = (self.x, self.y)
 
     def spawn(self):
         """Spawns a zombie at a random location around the edges of the world."""
@@ -91,20 +92,6 @@ class Zombie:
             else:
                 self.direction = 'up'
 
-
-    def check_bullet_collision(self, bullets):
-        """Checks for collision between zombies and bullets."""
-        for bullet in bullets:
-            if self.rect.colliderect(bullet.rect):
-                bullets.remove(bullet)
-                return True  # Return True if collision happened, so the zombie can be removed
-        return False
-    
-    # def check_player_collision(self, player):
-    #     """Checks for collision between zombies and bullets."""
-    #     if self.rect.colliderect(player.):
-
-    #     return False
 
     def draw(self, screen, camera_x, camera_y):
         """Draws the zombie as a green rectangle."""
