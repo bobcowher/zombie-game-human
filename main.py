@@ -71,7 +71,7 @@ while True:
                 print("Space pressed. Bullet fired")
 
     if len(zombies) < 5 and random.randint(1, 100) < 3:  # 3% chance of spawning a zombie per frame
-        zombies.append(Zombie(world_height=WORLD_HEIGHT, world_width=WORLD_WIDTH, size=80))  # Instantiate a new zombie
+        zombies.append(Zombie(world_height=WORLD_HEIGHT, world_width=WORLD_WIDTH, size=80, speed=random.randint(1,2)))  # Instantiate a new zombie
 
     # Get key presses
     keys = pygame.key.get_pressed()

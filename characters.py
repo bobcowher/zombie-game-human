@@ -31,13 +31,13 @@ class Player:
 
 
 class Zombie:
-    def __init__(self, world_width, world_height, size=50, zombie_speed=1):
+    def __init__(self, world_width, world_height, size=50, speed=1):
         # Spawn the zombie at a random position around the edges of the map
         self.size = size
         self.zombie_color = (0, 255, 0)
         self.world_width = world_width
         self.world_height = world_height
-        self.zombie_speed = zombie_speed
+        self.speed = speed
 
         self.x, self.y = self.spawn()
 
@@ -69,12 +69,12 @@ class Zombie:
         if distance != 0:
             dx, dy = dx / distance, dy / distance  # Normalize
         
-        new_x = self.x + dx * self.zombie_speed
+        new_x = self.x + dx * self.speed
         new_rect = pygame.Rect(new_x, self.y, self.size, self.size)
         if not check_collision(new_rect, walls):
             self.x = new_x
 
-        new_y = self.y + dy * self.zombie_speed
+        new_y = self.y + dy * self.speed
         new_rect = pygame.Rect(self.x, new_y, self.size, self.size)
         if not check_collision(new_rect, walls):
             self.y = new_y
