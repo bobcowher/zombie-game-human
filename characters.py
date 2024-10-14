@@ -96,4 +96,7 @@ class Zombie:
     def draw(self, screen, camera_x, camera_y):
         """Draws the zombie as a green rectangle."""
         # pygame.draw.rect(screen, self.zombie_color, self.rect)
-        pygame.draw.rect(screen, self.zombie_color, (self.rect.x - camera_x, self.rect.y - camera_y, self.size, self.size))
+        # pygame.draw.rect(screen, self.zombie_color, (self.rect.x - camera_x, self.rect.y - camera_y, self.size, self.size))
+
+        # zombie.rect = zombie_image.get_rect(center=(zombie.x, zombie.y))
+        screen.blit(self.images[self.direction], (self.rect.x - camera_x, self.rect.y - camera_y))

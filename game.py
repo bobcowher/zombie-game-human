@@ -163,9 +163,7 @@ class ZombieShooter:
             self.player.rect = player_image.get_rect(center=(self.player.x, self.player.y))
 
             for zombie in self.zombies:
-                zombie_image = zombie.images[zombie.direction]
-                zombie.rect = zombie_image.get_rect(center=(zombie.x, zombie.y))
-                self.screen.blit(zombie_image, (zombie.rect.x - camera_x, zombie.rect.y - camera_y))
+                zombie.draw(self.screen, camera_x, camera_y)
 
 
             self.screen.blit(player_image, (self.player.x - camera_x, self.player.y - camera_y))
