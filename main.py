@@ -46,15 +46,13 @@ bullets = []
 camera_x = 0
 camera_y = 0
 
-def collision_check(new_player_rect, walls):
+def collision_check(rect, walls, camera_x, camera_y):
     # Check for horizontal collision
-    collision = False
     for wall in walls:
-        if new_player_rect.colliderect(wall):
-            collision = True
-            break
+        if rect.colliderect(wall.x - camera_x + 25, wall.y - camera_y + 25, wall.width, wall.height):
+            return True
     
-    return collision
+    return False
 
 # Define walls as a list of rectangles (x, y, width, height)
 walls = [
@@ -94,7 +92,7 @@ while True:
 
     new_player_rect = pygame.Rect(new_player_x, player_y, player_size, player_size)
 
-    collision = collision_check(new_player_rect=new_player_rect, walls=walls)
+    collision = collision_check(rect=new_player_rect, walls=walls, camera_x=camera_x, camera_y=camera_y)
 
     if not collision:
         player_x = new_player_x
@@ -110,7 +108,7 @@ while True:
 
     new_player_rect = pygame.Rect(player_x, new_player_y, player_size, player_size)
 
-    collision = collision_check(new_player_rect=new_player_rect, walls=walls)
+    collision = collision_check(rect=new_player_rect, walls=walls, camera_x=camera_x, camera_y=camera_y)
 
     if not collision:
         player_y = new_player_y
@@ -136,7 +134,9 @@ while True:
 
     # Draw the player (adjusted for the camera position)
     player_image = player_images[player_direction]
-    player_rect = player_image.get_rect(center=(player_x - camera_x, player_y - camera_y))
+    # player_rect = player_image.get_rect(center=(player_x - camera_x, player_y - camera_y))
+    player_rect = player_image.get_rect(center=(player_x, player_y))
+
     screen.blit(player_image, player_rect.topleft)
     
     # Draw the world boundaries for testing
