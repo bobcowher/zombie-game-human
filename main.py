@@ -1,5 +1,6 @@
 import pygame
 import sys
+import math
 
 # Initialize PyGame
 pygame.init()
@@ -33,8 +34,8 @@ player_y = WORLD_HEIGHT // 2
 player_images = {}
 
 for direction in ('up', 'down', 'left', 'right'):
-    player_images[direction] = pygame.image.load(f'images/player_{direction}.png')
-
+    image = pygame.image.load(f'images/player_{direction}.png')
+    player_images[direction] = pygame.transform.scale(image, (player_size, player_size))
 
 player_direction = "up"
 
@@ -77,7 +78,7 @@ while True:
     new_player_x = player_x
     if keys[pygame.K_a]:  # Left
         new_player_x -= player_speed
-        player_direction = "up"
+        player_direction = "left"
     if keys[pygame.K_d]:  # Right
         new_player_x += player_speed
         player_direction = "right"
@@ -120,7 +121,9 @@ while True:
     screen.fill(WHITE)  # Fill the screen with white (background)
 
     # Draw the player (adjusted for the camera position)
-    pygame.draw.rect(screen, player_color, (player_x - camera_x, player_y - camera_y, player_size, player_size))
+    player_image = player_images[player_direction]
+    player_rect = player_image.get_rect(center=(player_x - camera_x, player_y - camera_y))
+    screen.blit(player_image, player_rect.topleft)
     
     # Draw the world boundaries for testing
     pygame.draw.rect(screen, RED, (0 - camera_x, 0 - camera_y, WORLD_WIDTH, WORLD_HEIGHT), 5)
