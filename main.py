@@ -24,6 +24,7 @@ clock = pygame.time.Clock()
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
+DARK_GREEN = (1, 50, 32)
 
 # Player settings
 player_size = 50
@@ -52,7 +53,8 @@ camera_y = 0
 def collision_check(rect, walls, camera_x, camera_y):
     # Check for horizontal collision
     for wall in walls:
-        if rect.colliderect(wall.x - camera_x + 25, wall.y - camera_y + 25, wall.width, wall.height):
+        # if rect.colliderect(wall.x - camera_x + 25, wall.y - camera_y + 25, wall.width, wall.height):
+        if(rect.colliderect(wall)):
             return True
     
     return False
@@ -80,7 +82,7 @@ while True:
                 bullets.append(bullet)
                 print("Space pressed. Bullet fired")
 
-    if random.randint(1, 100) < 3:  # 3% chance of spawning a zombie per frame
+    if len(zombies) < 5 and random.randint(1, 100) < 3:  # 3% chance of spawning a zombie per frame
         zombies.append(Zombie(world_height=WORLD_HEIGHT, world_width=WORLD_WIDTH))  # Instantiate a new zombie
 
     # Get key presses
@@ -153,13 +155,13 @@ while True:
     # player_rect = player_image.get_rect(center=(player_x - camera_x, player_y - camera_y))
     player_rect = player_image.get_rect(center=(player_x, player_y))
 
-    screen.blit(player_image, player_rect.topleft)
+    screen.blit(player_image, (player_x - camera_x, player_y - camera_y))
     
     # Draw the world boundaries for testing
     pygame.draw.rect(screen, RED, (0 - camera_x, 0 - camera_y, WORLD_WIDTH, WORLD_HEIGHT), 5)
 
     for wall in walls:
-        pygame.draw.rect(screen, RED, (wall.x - camera_x, wall.y - camera_y, wall.width, wall.height))
+        pygame.draw.rect(screen, DARK_GREEN, (wall.x - camera_x, wall.y - camera_y, wall.width, wall.height))
 
     # Update the display
     pygame.display.flip()
