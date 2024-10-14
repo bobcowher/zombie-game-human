@@ -1,7 +1,7 @@
 
-def check_wall_collision(rect, walls):
-    for wall in walls:
-        if(rect.colliderect(wall)):
+def check_collision(rect, rect_list):
+    for i in rect_list:
+        if(rect.colliderect(i)):
             return True
     
     return False
