@@ -1,6 +1,7 @@
 import random
 import pygame
 import math
+from util import *
 
 class Zombie:
     def __init__(self, world_width, world_height, zombie_size=50, zombie_speed=1):
@@ -25,14 +26,21 @@ class Zombie:
         ]
         return random.choice(spawn_positions)
 
-    def move_toward_player(self, player_x, player_y):
+    def move_toward_player(self, player_x, player_y, walls):
         """Moves the zombie toward the player's position."""
         dx, dy = player_x - self.x, player_y - self.y
         distance = math.hypot(dx, dy)
         if distance != 0:
             dx, dy = dx / distance, dy / distance  # Normalize
-        self.x += dx * self.zombie_speed
-        self.y += dy * self.zombie_speed
+        
+        new_x = self.x + dx * self.zombie_speed
+        new_y = self.y + dy * self.zombie_speed
+
+        new_rect = pygame.Rect(new_x, new_y, self.zombie_size, self.zombie_size)
+
+        if not check_wall_collision(new_rect, walls):
+            self.x, self.y = new_x, new_y
+        
         self.rect.topleft = (self.x, self.y)
 
     def check_bullet_collision(self, bullets):

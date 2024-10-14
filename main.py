@@ -136,7 +136,7 @@ while True:
     # Move zombies toward player and check for collisions with bullets
     zombies = [zombie for zombie in zombies if not zombie.check_bullet_collision(bullets)]
     for zombie in zombies:
-        zombie.move_toward_player(player_x, player_y)
+        zombie.move_toward_player(player_x, player_y, walls)
 
     # Drawing
     screen.fill(WHITE)  # Fill the screen with white (background)
