@@ -25,6 +25,7 @@ WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 DARK_GREEN = (1, 50, 32)
+LIGHT_BROWN = (181, 101, 29)
 
 # Player settings
 player_size = 50
@@ -139,7 +140,7 @@ while True:
         zombie.move_toward_player(player_x, player_y, walls)
 
     # Drawing
-    screen.fill(WHITE)  # Fill the screen with white (background)
+    screen.fill(LIGHT_BROWN)  # Fill the screen with white (background)
 
     # Move and draw bullets
     for bullet in bullets:

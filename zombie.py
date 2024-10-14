@@ -34,12 +34,14 @@ class Zombie:
             dx, dy = dx / distance, dy / distance  # Normalize
         
         new_x = self.x + dx * self.zombie_speed
-        new_y = self.y + dy * self.zombie_speed
-
-        new_rect = pygame.Rect(new_x, new_y, self.zombie_size, self.zombie_size)
-
+        new_rect = pygame.Rect(new_x, self.y, self.zombie_size, self.zombie_size)
         if not check_wall_collision(new_rect, walls):
-            self.x, self.y = new_x, new_y
+            self.x = new_x
+
+        new_y = self.y + dy * self.zombie_speed
+        new_rect = pygame.Rect(self.x, new_y, self.zombie_size, self.zombie_size)
+        if not check_wall_collision(new_rect, walls):
+            self.y = new_y
         
         self.rect.topleft = (self.x, self.y)
 
