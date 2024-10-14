@@ -1,6 +1,7 @@
 import pygame
 import sys
 import math
+from bullet import Bullet
 
 # Initialize PyGame
 pygame.init()
@@ -39,6 +40,8 @@ for direction in ('up', 'down', 'left', 'right'):
 
 player_direction = "up"
 
+bullets = []
+
 # Camera (viewport) offset
 camera_x = 0
 camera_y = 0
@@ -68,7 +71,13 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-
+        # Shooting event: spacebar to fire bullets
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                # bullet = Bullet(player_x + player_size // 2, player_y + player_size // 2, player_direction)
+                bullet = Bullet(player_x, player_y, player_direction)
+                bullets.append(bullet)
+                print("Space pressed. Bullet fired")
 
     # Get key presses
     keys = pygame.key.get_pressed()
@@ -119,6 +128,11 @@ while True:
 
     # Drawing
     screen.fill(WHITE)  # Fill the screen with white (background)
+
+    # Move and draw bullets
+    for bullet in bullets:
+        bullet.move()
+        bullet.draw(screen)
 
     # Draw the player (adjusted for the camera position)
     player_image = player_images[player_direction]
