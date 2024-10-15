@@ -60,6 +60,8 @@ class ZombieShooter:
             pygame.mixer.music.load("sounds/background_music.wav")
             pygame.mixer.music.play(-1,0.0)
 
+            self.last_walk_play_time = 0
+
             self.zombie_bite = pygame.mixer.Sound("sounds/zombie_bite_1.wav")
             self.zombie_hit = pygame.mixer.Sound("sounds/zombie_hit.wav")
             self.shotgun_blast = pygame.mixer.Sound("sounds/shotgun_blast.wav")
@@ -71,6 +73,14 @@ class ZombieShooter:
             self.vocals_4 = pygame.mixer.Sound("sounds/no_escape.wav")
 
             self.vocals_1.play()
+
+    def play_walking_sound(self):
+        if self.sound:
+            current_time = pygame.time.get_ticks()
+            if(current_time - self.last_walk_play_time > 1000):
+                self.footstep.play()
+                self.last_walk_play_time = current_time
+
 
     def start_next_level(self):
         self.level += 1
@@ -99,7 +109,12 @@ class ZombieShooter:
 
         pygame.display.flip()
 
-        pygame.time.wait(2000)
+        pygame.time.wait(4000)
+
+        if self.level > 3:
+            # Quit the game
+            pygame.quit()
+            sys.exit()
 
 
 
@@ -133,6 +148,8 @@ class ZombieShooter:
         self.screen.blit(score_surface, (10, 10))  # Draw the score at the top-left corner (10, 10)
         health_surface = self.font.render(f'Health: {self.player.health}', True, (0, 0, 0))  # Render the score with black color
         self.screen.blit(health_surface, (10, 35))  # Draw the score at the top-left corner (10, 10)
+        level_surface = self.font.render(f'Level: {self.level}', True, (0, 0, 0))  # Render the score with black color
+        self.screen.blit(level_surface, (10, 60))  # Draw the score at the top-left corner (10, 10)
 
     def fire_bullet(self):
         bullet = Bullet(self.player.x, self.player.y, self.player.direction)
@@ -142,6 +159,9 @@ class ZombieShooter:
         print("Space pressed. Bullet fired")
 
     def step(self):
+            
+            player_moved = False
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -170,8 +190,9 @@ class ZombieShooter:
 
             collision = check_collision(new_player_rect, self.walls)
 
-            if not collision:
+            if not collision and self.player.x != new_player_x:
                 self.player.x = new_player_x
+                self.play_walking_sound()
             
 
             new_player_y = self.player.y
@@ -186,8 +207,9 @@ class ZombieShooter:
 
             collision = check_collision(new_player_rect, self.walls)
 
-            if not collision:
+            if not collision and self.player.y != new_player_y:
                 self.player.y = new_player_y
+                self.play_walking_sound()
                 
             self.player.rect = pygame.Rect(self.player.x, self.player.y, self.player.size, self.player.size)
             # Check for collision with walls
