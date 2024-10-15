@@ -8,11 +8,13 @@ from util import check_collision, get_collision
 class ZombieShooter:
 
     def __init__(self, window_width, window_height, world_height, world_width, fps):
+
         self.window_width = window_width
         self.window_height = window_height
         self.world_height = world_height
         self.world_width = world_width
 
+        pygame.init()
         self.screen = pygame.display.set_mode((window_width, window_height))
 
         pygame.display.set_caption('Zombie Shooter')
@@ -59,6 +61,19 @@ class ZombieShooter:
         pygame.quit()
         sys.exit()
 
+    def fill_background(self):
+        self.screen.fill(self.background_color)  # Fill the screen with white (background)
+
+        score_surface = self.font.render(f'Score: {self.player.score}', True, (0, 0, 0))  # Render the score with black color
+        self.screen.blit(score_surface, (10, 10))  # Draw the score at the top-left corner (10, 10)
+        health_surface = self.font.render(f'Health: {self.player.health}', True, (0, 0, 0))  # Render the score with black color
+        self.screen.blit(health_surface, (10, 35))  # Draw the score at the top-left corner (10, 10)
+
+    def fire_bullet(self):
+        bullet = Bullet(self.player.x, self.player.y, self.player.direction)
+        self.bullets.append(bullet)
+        print("Space pressed. Bullet fired")
+
     def step(self):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -68,9 +83,7 @@ class ZombieShooter:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         # bullet = Bullet(player_x + player_size // 2, player_y + player_size // 2, player.direction)
-                        bullet = Bullet(self.player.x, self.player.y, self.player.direction)
-                        self.bullets.append(bullet)
-                        print("Space pressed. Bullet fired")
+                        self.fire_bullet()
 
             if len(self.zombies) < 5 and random.randint(1, 100) < 3:  # 3% chance of spawning a zombie per frame
                 self.zombies.append(Zombie(world_height=self.world_height, world_width=self.world_width, size=80, speed=random.randint(1,2)))  # Instantiate a new zombie
@@ -141,12 +154,7 @@ class ZombieShooter:
                 zombie.move_toward_player(self.player.x, self.player.y, self.walls)
 
             # Drawing
-            self.screen.fill(self.background_color)  # Fill the screen with white (background)
-
-            score_surface = self.font.render(f'Score: {self.player.score}', True, (0, 0, 0))  # Render the score with black color
-            self.screen.blit(score_surface, (10, 10))  # Draw the score at the top-left corner (10, 10)
-            health_surface = self.font.render(f'Health: {self.player.health}', True, (0, 0, 0))  # Render the score with black color
-            self.screen.blit(health_surface, (10, 35))  # Draw the score at the top-left corner (10, 10)
+            self.fill_background()
 
 
             # Move and draw self.bullets

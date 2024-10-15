@@ -7,8 +7,6 @@ import random
 from util import *
 from game import ZombieShooter
 
-# Initialize PyGame
-pygame.init()
 
 
 # Constants
