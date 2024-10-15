@@ -7,7 +7,7 @@ from util import check_collision, get_collision
 
 class ZombieShooter:
 
-    def __init__(self, window_width, window_height, world_height, world_width, fps):
+    def __init__(self, window_width, window_height, world_height, world_width, fps, sound=False):
 
         self.window_width = window_width
         self.window_height = window_height
@@ -39,6 +39,16 @@ class ZombieShooter:
             pygame.Rect(1000, 1000, 300, 50), # Another horizontal wall
             # Add more walls as needed
         ]
+
+        self.sound = sound
+
+        if self.sound:
+            pygame.mixer.init()
+            pygame.mixer.music.load("sounds/background_music.wav")
+            pygame.mixer.music.play(-1,0.0)
+
+            self.zombie_bite = pygame.mixer.Sound("sounds/zombie_bite_1.wav")
+
 
 
     def game_over(self):
@@ -144,6 +154,10 @@ class ZombieShooter:
                     bullet = None
                 elif check_collision(zombie.rect, [self.player.rect]):
                     self.player.health -= 1
+                    
+                    # if self.sound:
+                    #     self.zombie_bite.play()
+
                 else:
                     self.zombies_temp.append(zombie)
             
