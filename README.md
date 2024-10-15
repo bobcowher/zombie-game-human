@@ -7,3 +7,7 @@ pip install -r requirements.txt</br>
 ## Execution
 
 python ./main.py
+
+## Gameplay
+
+WASD to move. Spacebar to fire.
