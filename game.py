@@ -257,6 +257,9 @@ class ZombieShooter:
             for bullet in self.bullets:
                 bullet.move()
                 bullet.draw(self.screen, camera_x, camera_y)
+                
+                if check_collision(bullet.rect, self.walls):
+                    self.bullets.remove(bullet)
 
             # Draw self.zombies
             # for zombie in self.zombies:
