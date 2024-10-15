@@ -29,6 +29,11 @@ class Player:
 
         self.direction = "up"
 
+    def draw(self, screen, camera_x, camera_y):
+        # player_image = self.player.images[self.player.direction]
+        # self.player.rect = player_image.get_rect(center=(self.player.x, self.player.y))
+        screen.blit(self.images[self.direction], (self.x - camera_x, self.y - camera_y))
+
 
 class Zombie:
     def __init__(self, world_width, world_height, size=50, speed=1):

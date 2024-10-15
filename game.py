@@ -167,14 +167,10 @@ class ZombieShooter:
             #     zombie.draw(screen, camera_x, camera_y)
 
             # Draw the player (adjusted for the camera position)
-            player_image = self.player.images[self.player.direction]
-            self.player.rect = player_image.get_rect(center=(self.player.x, self.player.y))
+            self.player.draw(self.screen, camera_x, camera_y)
 
             for zombie in self.zombies:
                 zombie.draw(self.screen, camera_x, camera_y)
-
-
-            self.screen.blit(player_image, (self.player.x - camera_x, self.player.y - camera_y))
             
             # Draw the world boundaries for testing
             pygame.draw.rect(self.screen, self.border_color, (0 - camera_x, 0 - camera_y, self.world_width, self.world_height), 5)
