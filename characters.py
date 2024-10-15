@@ -6,16 +6,25 @@ from util import *
 
 class Player:
 
-    def __init__(self, world_width, world_height) -> None:
+    def __init__(self, world_width, world_height, walls) -> None:
         # Player settings
         self.size = 50
         self.speed = 5
 
         # Player initial position in the world (center of the larger world)
+        self.rect = None
+
         self.x = world_width // 2
         self.y = world_height // 2
-
-        self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+        
+        while True:
+            self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+            
+            if check_collision(self.rect, walls):
+                self.x += random.randint(-5, 5)
+                self.y += random.randint(-5, 5)
+            else:
+                break
 
         self.score = 0
         self.ammo = 10
@@ -106,4 +115,3 @@ class Zombie:
         # zombie.rect = zombie_image.get_rect(center=(zombie.x, zombie.y))
         screen.blit(self.images[self.direction], (self.rect.x - camera_x, self.rect.y - camera_y))
 
-        

@@ -4,6 +4,7 @@ from bullet import Bullet
 from characters import Player, Zombie
 import random
 from util import check_collision, get_collision
+from walls import *
 
 class ZombieShooter:
 
@@ -24,7 +25,9 @@ class ZombieShooter:
         self.clock = pygame.time.Clock() 
         self.fps = fps
 
-        self.player = Player(world_height=self.world_height, world_width=self.world_width)
+        self.walls = walls_2
+
+        self.player = Player(world_height=self.world_height, world_width=self.world_width, walls=self.walls)
 
         self.background_color = (181, 101, 29) # Light brown
         self.wall_color = (1, 50, 32)
@@ -35,8 +38,6 @@ class ZombieShooter:
         self.bullets = []
         self.zombies = []
 
-        self.level_goal_achieved = 0
-
         self.zombie_top_speed = 1
 
         self.level_goal = 5
@@ -44,13 +45,6 @@ class ZombieShooter:
         self.max_zombie_count = 5
 
         self.level = 1
-
-        self.walls = [
-            pygame.Rect(200, 200, 400, 50),  # A horizontal wall
-            pygame.Rect(850, 500, 50, 400),  # A vertical wall
-            pygame.Rect(1000, 1000, 300, 50), # Another horizontal wall
-            # Add more walls as needed
-        ]
 
         self.sound = sound
 
@@ -97,15 +91,20 @@ class ZombieShooter:
 
         if self.level == 2:
             self.vocals_2.play()
+            self.walls = walls_2
+            self.level_goal = 15
         elif self.level == 3:
             self.vocals_3.play()
+            self.walls = walls_3
+            self.level_goal = 30
 
         self.screen.blit(next_level_surface, next_level_rect)
-
-        self.level_goal += 10
+        
         self.zombie_top_speed += 1
-        self.max_zombie_count += 1
-        self.player.score = 0
+        self.max_zombie_count += 2
+        # self.player.score = 0
+
+        self.player = Player(world_height=self.world_height, world_width=self.world_width, walls=self.walls)
 
         pygame.display.flip()
 
