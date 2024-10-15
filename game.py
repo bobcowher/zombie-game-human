@@ -25,7 +25,7 @@ class ZombieShooter:
         self.clock = pygame.time.Clock() 
         self.fps = fps
 
-        self.walls = walls_2
+        self.walls = walls_1
 
         self.player = Player(world_height=self.world_height, world_width=self.world_width, walls=self.walls)
 

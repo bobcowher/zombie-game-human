@@ -10,7 +10,7 @@ walls_1 = [
 walls_2 = [
     pygame.Rect(150, 100, 400, 50),   # Top-left horizontal wall
     pygame.Rect(150, 500, 450, 50),   # Bottom-left horizontal wall
-    pygame.Rect(550, 100, 50, 550),  # Left vertical wall connecting top and bottom
+    pygame.Rect(550, 250, 50, 300),  # Left vertical wall connecting top and bottom
     pygame.Rect(700, 100, 350, 50),  # Top-right horizontal wall
     pygame.Rect(700, 550, 400, 50),  # Bottom-right horizontal wall
     pygame.Rect(1000, 150, 50, 450), # Right vertical wall connecting top and bottom

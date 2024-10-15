@@ -76,25 +76,46 @@ class Zombie:
         ]
         return random.choice(spawn_positions)
 
+
     def move_toward_player(self, player_x, player_y, walls):
-        """Moves the zombie toward the player's position."""
+        """Moves the zombie toward the player's position, with better handling of wall collisions."""
         dx, dy = player_x - self.x, player_y - self.y
         distance = math.hypot(dx, dy)
         if distance != 0:
             dx, dy = dx / distance, dy / distance  # Normalize
         
+        # Try horizontal movement first
         new_x = self.x + dx * self.speed
         new_rect = pygame.Rect(new_x, self.y, self.size, self.size)
-        if not check_collision(new_rect, walls):
-            self.x = new_x
+        can_move_x = not check_collision(new_rect, walls)
 
+        if can_move_x:
+            self.x = new_x
+        else:
+            # Increase speed along y-axis if horizontal movement is blocked
+            new_y = self.y + dy * self.speed * 1.5  # Increase speed in vertical direction
+            new_rect = pygame.Rect(self.x, new_y, self.size, self.size)
+            if not check_collision(new_rect, walls):
+                self.y = new_y
+
+        # Try vertical movement next
         new_y = self.y + dy * self.speed
         new_rect = pygame.Rect(self.x, new_y, self.size, self.size)
-        if not check_collision(new_rect, walls):
+        can_move_y = not check_collision(new_rect, walls)
+
+        if can_move_y:
             self.y = new_y
-        
+        else:
+            # Increase speed along x-axis if vertical movement is blocked
+            new_x = self.x + dx * self.speed * 1.5  # Increase speed in horizontal direction
+            new_rect = pygame.Rect(new_x, self.y, self.size, self.size)
+            if not check_collision(new_rect, walls):
+                self.x = new_x
+
+        # Update the zombie's position and direction
         self.rect.topleft = (self.x, self.y)
 
+        # Set direction for zombie based on movement
         if abs(dx) > abs(dy):
             if dx > 0:
                 self.direction = 'right'
