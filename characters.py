@@ -105,3 +105,5 @@ class Zombie:
 
         # zombie.rect = zombie_image.get_rect(center=(zombie.x, zombie.y))
         screen.blit(self.images[self.direction], (self.rect.x - camera_x, self.rect.y - camera_y))
+
+        

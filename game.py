@@ -43,11 +43,19 @@ class ZombieShooter:
         self.sound = sound
 
         if self.sound:
+            pygame.mixer.pre_init(44100, -16, 2, 64)
             pygame.mixer.init()
             pygame.mixer.music.load("sounds/background_music.wav")
             pygame.mixer.music.play(-1,0.0)
 
             self.zombie_bite = pygame.mixer.Sound("sounds/zombie_bite_1.wav")
+            self.zombie_hit = pygame.mixer.Sound("sounds/zombie_hit.wav")
+            self.shotgun_blast = pygame.mixer.Sound("sounds/shotgun_blast.wav")
+            self.zombie_snarl = pygame.mixer.Sound("sounds/zombie_snarl.wav")
+            self.vocals_1 = pygame.mixer.Sound("sounds/one_of_those_things_got_in.wav")
+
+            self.vocals_1.play()
+
 
 
 
@@ -63,6 +71,8 @@ class ZombieShooter:
 
         # Update the display to show the message
         pygame.display.flip()
+
+        self.zombie_snarl.play()
 
         # Pause for 2 seconds (2000 milliseconds) before quitting
         pygame.time.wait(2000)
@@ -82,6 +92,8 @@ class ZombieShooter:
     def fire_bullet(self):
         bullet = Bullet(self.player.x, self.player.y, self.player.direction)
         self.bullets.append(bullet)
+        self.shotgun_blast.play()
+
         print("Space pressed. Bullet fired")
 
     def step(self):
@@ -131,7 +143,8 @@ class ZombieShooter:
 
             if not collision:
                 self.player.y = new_player_y
-
+                
+            self.player.rect = pygame.Rect(self.player.x, self.player.y, self.player.size, self.player.size)
             # Check for collision with walls
             collision = False
             
@@ -151,12 +164,14 @@ class ZombieShooter:
                     bullet = get_collision(zombie.rect, self.bullets)
                     self.player.score += 1
                     self.bullets.remove(bullet)
+                    if self.sound:
+                        self.zombie_hit.play()
                     bullet = None
                 elif check_collision(zombie.rect, [self.player.rect]):
                     self.player.health -= 1
                     
-                    # if self.sound:
-                    #     self.zombie_bite.play()
+                    if self.sound:
+                        self.zombie_bite.play()
 
                 else:
                     self.zombies_temp.append(zombie)
