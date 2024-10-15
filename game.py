@@ -30,8 +30,20 @@ class ZombieShooter:
         self.wall_color = (1, 50, 32)
         self.border_color = (255, 0, 0)
 
+        self.announcement_font = pygame.font.SysFont(None, 100)
+
         self.bullets = []
         self.zombies = []
+
+        self.level_goal_achieved = 0
+
+        self.zombie_top_speed = 1
+
+        self.level_goal = 5
+
+        self.max_zombie_count = 5
+
+        self.level = 1
 
         self.walls = [
             pygame.Rect(200, 200, 400, 50),  # A horizontal wall
@@ -52,18 +64,51 @@ class ZombieShooter:
             self.zombie_hit = pygame.mixer.Sound("sounds/zombie_hit.wav")
             self.shotgun_blast = pygame.mixer.Sound("sounds/shotgun_blast.wav")
             self.zombie_snarl = pygame.mixer.Sound("sounds/zombie_snarl.wav")
+            self.footstep = pygame.mixer.Sound("sounds/footstep.wav")
             self.vocals_1 = pygame.mixer.Sound("sounds/one_of_those_things_got_in.wav")
+            self.vocals_2 = pygame.mixer.Sound("sounds/virus_infection_alert.wav")
+            self.vocals_3 = pygame.mixer.Sound("sounds/come_and_see.wav")
+            self.vocals_4 = pygame.mixer.Sound("sounds/no_escape.wav")
 
             self.vocals_1.play()
 
+    def start_next_level(self):
+        self.level += 1
+        
+        if self.level > 3:
+            next_level_surface = self.announcement_font.render('You Won!', True, (255, 0, 0))
+        else:
+            next_level_surface = self.announcement_font.render(f'Starting level {self.level}', True, (255, 0, 0))
 
+        next_level_rect = next_level_surface.get_rect(center=(self.window_width // 2, self.window_height // 2))
+
+        self.zombies = []
+        self.bullets = []
+
+        if self.level == 2:
+            self.vocals_2.play()
+        elif self.level == 3:
+            self.vocals_3.play()
+
+        self.screen.blit(next_level_surface, next_level_rect)
+
+        self.level_goal += 10
+        self.zombie_top_speed += 1
+        self.max_zombie_count += 1
+        self.player.score = 0
+
+        pygame.display.flip()
+
+        pygame.time.wait(2000)
+
+
+
+        
 
 
     def game_over(self):
-        game_over_font = pygame.font.SysFont(None, 100)  # Font size 100 for a big message
-
         # Render the "You Died" message
-        game_over_surface = game_over_font.render('You Died', True, (255, 0, 0))  # Red text
+        game_over_surface = self.announcement_font.render('You Died', True, (255, 0, 0))  # Red text
         game_over_rect = game_over_surface.get_rect(center=(self.window_width // 2, self.window_height // 2))
 
         # Blit the message to the screen
@@ -107,8 +152,8 @@ class ZombieShooter:
                         # bullet = Bullet(player_x + player_size // 2, player_y + player_size // 2, player.direction)
                         self.fire_bullet()
 
-            if len(self.zombies) < 5 and random.randint(1, 100) < 3:  # 3% chance of spawning a zombie per frame
-                self.zombies.append(Zombie(world_height=self.world_height, world_width=self.world_width, size=80, speed=random.randint(1,2)))  # Instantiate a new zombie
+            if len(self.zombies) < self.max_zombie_count and random.randint(1, 100) < 3:  # 3% chance of spawning a zombie per frame
+                self.zombies.append(Zombie(world_height=self.world_height, world_width=self.world_width, size=80, speed=random.randint(1,self.zombie_top_speed)))  # Instantiate a new zombie
 
             # Get key presses
             keys = pygame.key.get_pressed()
@@ -215,3 +260,6 @@ class ZombieShooter:
 
             # Cap the frame rate
             self.clock.tick(self.fps)
+
+            if(self.level_goal <= self.player.score):
+                self.start_next_level()
