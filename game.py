@@ -6,6 +6,20 @@ import random
 from util import check_collision, get_collision
 from walls import *
 
+class HealthDrop:
+    def __init__(self, world_width, world_height):
+        self.image = pygame.image.load("images/heart.png").convert_alpha()  # Load heart image
+        self.size = 30  # Adjust as needed
+        self.image = pygame.transform.scale(self.image, (self.size, self.size))  # Resize to fit game
+        
+        self.x = random.randint(0, world_width - self.size)
+        self.y = random.randint(0, world_height - self.size)
+        self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+
+    def draw(self, screen, camera_x, camera_y):
+        # Adjust for the camera and draw the heart image
+        screen.blit(self.image, (self.x - camera_x, self.y - camera_y))
+
 class ZombieShooter:
 
     def __init__(self, window_width, window_height, world_height, world_width, fps, sound=False):
@@ -14,6 +28,10 @@ class ZombieShooter:
         self.window_height = window_height
         self.world_height = world_height
         self.world_width = world_width
+
+        self.health_drop = None  # No health drop initially
+
+        self.paused = False  # Game starts unpaused
 
         pygame.init()
         self.screen = pygame.display.set_mode((window_width, window_height))
@@ -68,6 +86,25 @@ class ZombieShooter:
 
             self.vocals_1.play()
 
+    def toggle_pause(self):
+        self.paused = not self.paused  # Toggle between paused and unpaused
+
+        if self.paused:
+            pause_surface = self.announcement_font.render('Game Paused', True, (255, 255, 255))  # White text
+            pause_rect = pause_surface.get_rect(center=(self.window_width // 2, self.window_height // 2))
+            self.screen.blit(pause_surface, pause_rect)
+            pygame.display.flip()  # Update display to show pause message
+
+            # Wait until the player unpauses (ignore everything else)
+            while self.paused:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+                    elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                        self.paused = False  # Unpause the game
+                self.clock.tick(10)  # Prevent busy-waiting
+
     def play_walking_sound(self):
         if self.sound:
             current_time = pygame.time.get_ticks()
@@ -116,10 +153,6 @@ class ZombieShooter:
             sys.exit()
 
 
-
-        
-
-
     def game_over(self):
         # Render the "You Died" message
         game_over_surface = self.announcement_font.render('You Died', True, (255, 0, 0))  # Red text
@@ -157,8 +190,25 @@ class ZombieShooter:
 
         print("Space pressed. Bullet fired")
 
+    def spawn_health_drop(self):
+        if not self.health_drop and random.randint(1, 100) < 5:  # 5% chance of spawning per frame
+            self.health_drop = HealthDrop(self.world_width, self.world_height)
+
     def step(self):
-            
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        self.fire_bullet()
+                    elif event.key == pygame.K_ESCAPE:
+                        self.toggle_pause()  # Pause/unpause the game
+
+            if self.paused:
+                return  # Skip the rest of the game loop if paused
+
             player_moved = False
 
             for event in pygame.event.get():
@@ -173,6 +223,9 @@ class ZombieShooter:
 
             if len(self.zombies) < self.max_zombie_count and random.randint(1, 100) < 3:  # 3% chance of spawning a zombie per frame
                 self.zombies.append(Zombie(world_height=self.world_height, world_width=self.world_width, size=80, speed=random.randint(1,self.zombie_top_speed)))  # Instantiate a new zombie
+
+            # Spawn health drop randomly
+            self.spawn_health_drop()
 
             # Get key presses
             keys = pygame.key.get_pressed()
@@ -275,6 +328,15 @@ class ZombieShooter:
 
             for wall in self.walls:
                 pygame.draw.rect(self.screen, self.wall_color, (wall.x - camera_x, wall.y - camera_y, wall.width, wall.height))
+
+            # Draw health drop
+            if self.health_drop:
+                self.health_drop.draw(self.screen, camera_x, camera_y)
+
+            # Check for player-health drop collision
+            if self.health_drop and self.player.rect.colliderect(self.health_drop.rect):
+                self.player.health = min(self.player.health + 1, 100)  # Increase health by 1
+                self.health_drop = None  # Remove the health drop
 
             # Update the display
             pygame.display.flip()
