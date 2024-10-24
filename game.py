@@ -293,7 +293,9 @@ class ZombieShooter:
 
             collision = check_collision(new_player_rect, self.walls)
 
-            if not collision and self.player.x != new_player_x:
+            if not collision \
+               and self.player.x != new_player_x \
+               and (0 <= new_player_x <= self.world_width - self.player.size):
                 self.player.x = new_player_x
                 self.play_walking_sound()
             
@@ -310,7 +312,9 @@ class ZombieShooter:
 
             collision = check_collision(new_player_rect, self.walls)
 
-            if not collision and self.player.y != new_player_y:
+            if not collision \
+               and self.player.y != new_player_y \
+               and (0 <= new_player_y <= self.world_height - self.player.size):
                 self.player.y = new_player_y
                 self.play_walking_sound()
                 
